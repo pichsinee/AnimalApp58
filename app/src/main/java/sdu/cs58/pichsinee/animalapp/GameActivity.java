@@ -1,6 +1,9 @@
 package sdu.cs58.pichsinee.animalapp;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,7 +39,7 @@ public class GameActivity extends AppCompatActivity {
         questionImageView = findViewById(R.id.imvQuestion);
         volumnImageButton = findViewById(R.id.imbVolumn);
 
-        //แสดงคำถาม
+        //นับจำนวนคำถาม
         for (int i=1; i <= questionCount; i++) {
             qID.add(i);
         }
@@ -64,6 +67,46 @@ public class GameActivity extends AppCompatActivity {
         }
 
     }//end setQuestion Method
+
+    public void choiceAns(View view){   //ตรวจคำตอบ
+
+        Button button = (Button) view;
+        String buttonString = button.getText().toString();
+        if (buttonString.equals(answer)) {
+            score++;
+        }
+
+        if (qID.isEmpty()) {//ถ้าทำครบทุกข้อ นั่นคือ qID เป็นค่าว่าง
+            dialogboxScore();//เรียก Method dialogboxScore() สำหรับแสดงคะแนน
+        } else {//ถ้ายังทำไม่ครบทุกข้อ
+            setQuestion(qID.remove(0)); //เรียก Method setQuestion()แสดงคำถามถัดไป
+        }
+
+    }//end choiceAns Method
+
+    private void dialogboxScore() { //Method สำหรับแสดงคะแนน
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("สรุปคะแนน");
+        builder.setMessage("ได้คะแนน " + score + " คะแนน")
+            .setCancelable(false)
+            .setPositiveButton("ออกจากเกม", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            })
+            .setNegativeButton("เล่นอีกครั้ง", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+    }//end dialogboxScore Method
 
     public void playSound(View view) {
         mediaPlayer.start();
